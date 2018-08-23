@@ -53,7 +53,7 @@ The first step when creating any gRPC service is to define it. Like all gRPC
 services, gRPC-Web uses [protocol buffers](https://developers.google.com/protocol-buffers/)
 to define its RPC service methods and their message request and response types.
 
-```grpc
+```proto
 service EchoService {
   rpc Echo(EchoRequest) returns (EchoResponse);
 
