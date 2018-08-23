@@ -106,10 +106,8 @@ stream.on('data', function(response) {
 
 ## Proxy interoperability
 
-Multiple proxies currently support the gRPC-Web protocol.
-
-> The default proxy is currently [Envoy](https://envoyproxy.io), which supports
-> gRPC-Web out of the box.
+Multiple proxies currently support the gRPC-Web protocol. The default proxy is
+currently [Envoy](https://envoyproxy.io), which supports gRPC-Web out of the box.
 
 ### Envoy
 
@@ -121,7 +119,8 @@ $ docker-compose up echo-server envoy commonjs-client
 
 ### nginx
 
-An alternative is to use a specially configured [nginx](https://nginx.org) proxy: 
+An alternative is to use a specially configured [nginx](https://nginx.org) proxy with the
+echo example: 
 
 ```shell
 $ docker-compose up echo-server nginx commonjs-client
@@ -130,7 +129,8 @@ $ docker-compose up echo-server nginx commonjs-client
 ### gRPC-Web Go Proxy
 
 Finally, you can also try the
-[gRPC-Web Go Proxy](https://github.com/improbable-eng/grpc-web/tree/master/go/grpcwebproxy):
+[gRPC-Web Go Proxy](https://github.com/improbable-eng/grpc-web/tree/master/go/grpcwebproxy)
+with the echo example:
 
 ```shell
 $ docker-compose up echo-server grpcwebproxy binary-client
