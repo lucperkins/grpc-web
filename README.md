@@ -62,15 +62,12 @@ service EchoService {
 }
 ```
 
-
 ### 2. Build the server
 
-Next you need to have a gRPC server that implements the service interface and a
+Next, you need to create a gRPC server that implements the service interface and a
 gateway that allows the client to connect to the server. Our example builds a
 simple C++ gRPC backend server and the Envoy proxy. You can find out more in
 the [Echo Example](net/grpc/gateway/examples/echo).
-
-
 
 ### 3. Write your JS client
 
@@ -84,21 +81,24 @@ var echoService = new proto.grpc.gateway.testing.EchoServiceClient(
   'http://localhost:8080');
 ```
 
-Make a unary RPC call
+Make a unary RPC call:
 
 ```js
 var unaryRequest = new proto.grpc.gateway.testing.EchoRequest();
+
 unaryRequest.setMessage(msg);
+
 echoService.echo(unaryRequest, {},
   function(err, response) {
     console.log(response.getMessage());
   });
 ```
 
-Server-side streaming is supported!
+Server-side streaming is also supported:
 
 ```js
 var stream = echoService.serverStreamingEcho(streamRequest, {});
+
 stream.on('data', function(response) {
   console.log(response.getMessage());
 });
@@ -106,65 +106,67 @@ stream.on('data', function(response) {
 
 ## Proxy interoperability
 
-Multiple proxies supports the gRPC-Web protocol. Currently, the default proxy
-is [Envoy](https://www.envoyproxy.io), which supports gRPC-Web out of the box.
+Multiple proxies currently support the gRPC-Web protocol.
+
+> The default proxy is currently [Envoy](https://envoyproxy.io), which supports
+> gRPC-Web out of the box.
+
+### Envoy
+
+To run the echo example with Envoy:
 
 ```sh
 $ docker-compose up echo-server envoy commonjs-client
 ```
 
-An alternative is to build Nginx that comes with this repository.
+### nginx
+
+An alternative is to use a specially configured [nginx](https://nginx.org) proxy: 
 
 ```sh
 $ docker-compose up echo-server nginx commonjs-client
 ```
 
-Finally, you can also try this [gRPC-Web Go Proxy](https://github.com/improbable-eng/grpc-web/tree/master/go/grpcwebproxy).
+### gRPC-Web Go Proxy
+
+Finally, you can also try the
+[gRPC-Web Go Proxy](https://github.com/improbable-eng/grpc-web/tree/master/go/grpcwebproxy):
 
 ```sh
 $ docker-compose up echo-server grpcwebproxy binary-client
 ```
 
-
 ## Client configuration options
 
-Typically, you will run the following command to generate the client stub
-from your proto definitions:
+You can generate a client stub from your Protobuf definitions using a `protoc`
+command like this:
 
 ```sh
 $ protoc -I=$DIR echo.proto \
---plugin=protoc-gen-grpc-web=/path-to/protoc-gen-grpc-web \
---js_out=import_style=commonjs:$OUT_DIR \
---grpc-web_out=import_style=commonjs,mode=grpcwebtext,out=echo_grpc_pb.js:$OUT_DIR
+  --plugin=protoc-gen-grpc-web=/path-to/protoc-gen-grpc-web \
+  --js_out=import_style=commonjs:$OUT_DIR \
+  --grpc-web_out=import_style=commonjs,mode=grpcwebtext,out=echo_grpc_pb.js:$OUT_DIR
 ```
-
 
 ### Import style
 
-The default generated code has [Closure](https://developers.google.com/closure/library/)
-`goog.require()` import style. Pass in `import_style=closure`.
+gRPC-Web supports two different import styles that you can specify using the `--js_out` flag:
 
-The [CommonJS](https://requirejs.org/docs/commonjs.html) style `require()` is
-also supported. Pass in `import_style=commonjs`.
+Style | Import syntax | Flag
+:-----|:--------------|:----
+[Closure](https://developers.google.com/closure/library/) (**default**) | `goog.require()` | `import_style=closure`
+[CommonJS](https://requirejs.org/docs/commonjs.html) | `require()` | `import_style=commonjs`
 
-
-Note: ES6-style `import` is not yet supported.
-
+> **Note**: ES6-style `import` is not yet supported.
 
 ### Wire format mode
 
+gRPC-Web supports two different wire formats that you can specify using the `--grpc-web_out` flag:
+
+Content type | Encoding | Supported calls | Flag
+:------------|:---------|:----------------|:----
+`application/grpc-web-text` (**default**) | [base64](https://en.wikipedia.org/wiki/Base64) | Unary, streaming | `mode=grpcwebtext`
+`application/grpc-web+proto` | Binary Protobuf | Unary | `mode=grpcweb`
+
 For more information about the gRPC-Web wire format, please see the
-[spec](https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-WEB.md#protocol-differences-vs-grpc-over-http2).
-
-The default generated code sends the payload in the `grpc-web-text` format.
-Pass in `mode=grpcwebtext`.
-
-  - `Content-type: application/grpc-web-text`
-  - Payload are base64-encoded.
-  - Both unary and server streaming calls are supported.
-
-A binary protobuf format is also supported. Pass in `mode=grpcweb`.
-
-  - `Content-type: application/grpc-web+proto`
-  - Payload are in the binary protobuf format.
-  - Only unary calls are supported for now.
+[protocol spec](https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-WEB.md#protocol-differences-vs-grpc-over-http2).
