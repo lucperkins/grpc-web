@@ -4,7 +4,7 @@ gRPC-Web is a Javascript client library that enables web apps to interact
 gRPC servers directly, without needing an HTTP intermediary. You can find
 out much more about gRPC on the [official gRPC website](https://grpc.io).
 
-> The current release is a Beta release, and we expect to announce
+> The current gRPC-Web release is a beta release. We expect to announce
 > general availability (GA) by October 2018.
 
 ## Background
@@ -29,13 +29,13 @@ You can try out gRPC-Web by running a simple echo example in your browser.
 
 First, clone this repository:
 
-```sh
+```shell
 $ git clone https://github.com/grpc/grpc-web
 ```
 
 From the repo root directory:
 
-```sh
+```shell
 $ docker-compose up echo-server envoy commonjs-client
 ```
 
@@ -115,7 +115,7 @@ Multiple proxies currently support the gRPC-Web protocol.
 
 To run the echo example with Envoy:
 
-```sh
+```shell
 $ docker-compose up echo-server envoy commonjs-client
 ```
 
@@ -123,7 +123,7 @@ $ docker-compose up echo-server envoy commonjs-client
 
 An alternative is to use a specially configured [nginx](https://nginx.org) proxy: 
 
-```sh
+```shell
 $ docker-compose up echo-server nginx commonjs-client
 ```
 
@@ -132,7 +132,7 @@ $ docker-compose up echo-server nginx commonjs-client
 Finally, you can also try the
 [gRPC-Web Go Proxy](https://github.com/improbable-eng/grpc-web/tree/master/go/grpcwebproxy):
 
-```sh
+```shell
 $ docker-compose up echo-server grpcwebproxy binary-client
 ```
 
@@ -141,7 +141,7 @@ $ docker-compose up echo-server grpcwebproxy binary-client
 You can generate a client stub from your Protobuf definitions using a `protoc`
 command like this:
 
-```sh
+```shell
 $ protoc -I=$DIR echo.proto \
   --plugin=protoc-gen-grpc-web=/path-to/protoc-gen-grpc-web \
   --js_out=import_style=commonjs:$OUT_DIR \
