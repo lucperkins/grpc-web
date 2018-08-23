@@ -53,7 +53,7 @@ The first step when creating any gRPC service is to define it. Like all gRPC
 services, gRPC-Web uses [protocol buffers](https://developers.google.com/protocol-buffers/)
 to define its RPC service methods and their message request and response types.
 
-```protobuf
+```grpc
 service EchoService {
   rpc Echo(EchoRequest) returns (EchoResponse);
 
@@ -77,18 +77,18 @@ from the browser!
 Create your client
 
 ```js
-var echoService = new proto.grpc.gateway.testing.EchoServiceClient(
-  'http://localhost:8080');
+var echoService = new proto.grpc.gateway.testing.EchoServiceClient('http://localhost:8080');
 ```
 
 Make a unary RPC call:
 
 ```js
 var unaryRequest = new proto.grpc.gateway.testing.EchoRequest();
-
 unaryRequest.setMessage(msg);
 
-echoService.echo(unaryRequest, {},
+const metadata = {};
+
+echoService.echo(unaryRequest, metadata,
   function(err, response) {
     console.log(response.getMessage());
   });
